@@ -147,7 +147,7 @@ int EnumScanLog(TCHAR* strFileName, ULONG64 nFileSize, void* ctx) {
 
     TCHAR * fname = (TCHAR *)malloc(MAX_PATH * sizeof(TCHAR));
     if (fname == NULL) {
-        LogF(LOG_APP, "malloc failed for file name %s\n", &s[0]);
+        LogF(LOG_APP, "Malloc memory failed for file name %s\n", &s[0]);
         return 1;
     }
 
@@ -196,7 +196,7 @@ void UpdateStatus(HWND hDlg)
                 HWND hPB = GetDlgItem(hDlg, IDC_PROGRESS_SCAN);
                 PostMessage(hPB, PBM_SETPOS, (WPARAM)bytesToMB(total_bytes_scanned), 0);
                 TCHAR strStatus[128];
-                StringCchPrintf(strStatus, 128, _T("Đang quét %d/%d files, %d/%d MB"),
+                StringCchPrintf(strStatus, 128, _T("Scanning %d/%d files, %d/%d MB"),
                     total_processed, g_files_cnt, bytesToMB(total_bytes_scanned), bytesToMB(g_bytes_cnt));
                 SetDlgItemText(hDlg, IDC_SCAN_STATUS, strStatus);
             }
@@ -234,7 +234,7 @@ DWORD WINAPI ManagerThreadFunction(LPVOID lpParam)
     g_scan_ctx = (scan_ctx_t*)malloc(sizeof(scan_ctx_t) * n_worker_threads);
     if (g_scan_ctx == NULL) {
         LogF(LOG_APP, "Error when allocate memory for scan context\n");
-        MessageBox(NULL, _T("Thiếu bộ nhớ, vui lòng thử lại sau."), DEFAULT_APP_TITLE, MB_ICONERROR | MB_OK);
+        MessageBox(NULL, _T("Not enough memory, please retry later"), DEFAULT_APP_TITLE, MB_ICONERROR | MB_OK);
         return 0;
     }
     memset(g_scan_ctx, 0, sizeof(scan_ctx_t) * n_worker_threads);
@@ -345,7 +345,7 @@ void onScan(HWND hDlg)
     GetDlgItemTextA(hDlg, IDC_EDIT_THREADS, strWorkers, 128);
     int n_workers = atoi(strWorkers);
     if ((n_workers <= 0) || (n_workers > MAX_THREADS)) {
-        MessageBox(hDlg, _T("Vui lòng nhập số worker trong khoảng từ 1 -> 8"), DEFAULT_APP_TITLE, MB_ICONINFORMATION | MB_OK);
+        MessageBox(hDlg, _T("Please enter number of worker threads in range from 1 to 8"), DEFAULT_APP_TITLE, MB_ICONINFORMATION | MB_OK);
         return;
     }
 
@@ -353,12 +353,12 @@ void onScan(HWND hDlg)
     g_matched_cnt = 0;
 
     if (lstrlen(strLogFolder) == 0) {
-        MessageBox(hDlg, _T("Vui lòng nhập thư mục cần quét log."), DEFAULT_APP_TITLE, MB_ICONINFORMATION | MB_OK);
+        MessageBox(hDlg, _T("Please enter folder to scan log."), DEFAULT_APP_TITLE, MB_ICONINFORMATION | MB_OK);
         return;
     }
 #ifdef ALLOW_INPUT_FILTER
     if (lstrlen(strPattern) == 0) {
-        MessageBox(hDlg, _T("Vui lòng nhập bộ lọc để quét log."), DEFAULT_APP_TITLE, MB_ICONINFORMATION | MB_OK);
+        MessageBox(hDlg, _T("Please enter filter to scan log."), DEFAULT_APP_TITLE, MB_ICONINFORMATION | MB_OK);
         return;
     }
 #endif
@@ -388,9 +388,9 @@ void onScan(HWND hDlg)
         folder, stime_str, end_ms, end_ms - start_ms);
 
     if (g_matched_cnt == 0)
-        MessageBox(NULL, _T("Đã hoàn thành việc quét APT, xem kết quả chi tiết trong file e0_scan.log"), DEFAULT_APP_TITLE, MB_OK);
+        MessageBox(NULL, _T("Finish scan all log files for Microsoft Exchange 0-day vulnerability.\nSee details result in file e0_scan.log"), DEFAULT_APP_TITLE, MB_OK);
     else
-        MessageBox(NULL, _T("Đã phát hiện dấu hiệu tấn công Microsoft Exchange, xem kết quả chi tiết trong file e0_matched.log và e0_scan.log"), DEFAULT_APP_TITLE, MB_OK);
+        MessageBox(NULL, _T("Detected signs of exploit use Microsoft Exchange 0-day vulnerability.\nSee details result in file e0_matched.log and e0_scan.log"), DEFAULT_APP_TITLE, MB_OK);
 }
 
 void InitAtMiddle(HWND hWnd)
